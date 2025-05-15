@@ -1,0 +1,67 @@
+### Overview
+
+PocoLoco is a dice-rolling game played with chips. PocoLoco is played in rounds.
+In each round, players take turns rolling three dice and try to get the highest score possible. After all the players have taken their turn in a round, the lowest-scoring player is given chips from the other players.
+The game ends when a player loses all their chips. The first player with zero
+chips is the winner. Eg) Similar to how losing all your cards in UNO is a win.
+
+### Gameplay
+
+Each player starts with 10 chips. If you want a longer game, you can start with more
+chips. If you want a shorter game, use fewer chips.
+
+At the start of the round, the order of the players is shuffled randomly.
+
+The starting player for the round rolls all three dice. Then, they have to choice to reroll all, 1, or 2 dice trying to get the highest possible score. They can re-roll up to two times.
+
+When a player's turn is done, the next player rolls. Within a round, the next
+player can only roll as many times as the player before them.
+Eg) If the order is P1,P2,P3,P4 and P1 decides to roll only once, the succeeding players can only roll once.
+When a new round starts then the first player can roll up to three times.
+
+### Scoring system
+
+Dice rolls are ranked using this table, ordered from best (at the top) to worst
+(at the bottom):
+
+- PoCo!: 4, 5, 6
+- Three-of-a-kind:
+	6, 6, 6
+	5, 5, 5
+	4, 4, 4
+	3, 3, 3
+	2, 2, 2
+	1, 1, 1
+- Loco!: 1, 2, 3
+- every other roll is ranked according to the dice score, as explained below
+
+To calculate the score of a roll that's not PoCo!, Loco!, or three-of-a-kind,
+you sum the numbers on the face of each die using these values:
+
+- 1 = 100 points
+- 2 = 2 points
+- 3 = 3 points
+- 4 = 4 points
+- 5 = 5 points
+- 6 = 60 points
+
+For example, if you roll 1, 4, 6, then you score 100 + 4 + 60 = 164 points.
+
+
+After everyone has had their turn, the player with the highest scoring roll and
+lowest scoring roll are determined. Then everyone, except the lowest-scoring
+player, gives chips **to the lowest-scoring player** as follows:
+
+- 1 chip if the winners score is a points total
+- 2 chips if the winners score is 1, 2, 3 (Loco!)
+- 3 chips if the winners score is any three-of-a-kind
+- 4 chips if the winners score is 4, 5, 6 (PoCo!)
+
+After this, if a player has no chips, then they win and the game is over. Rounds keep being played
+until there is a winner.
+
+
+### TIE BREAKING
+
+When determining a round's highest and lowest scoring players, it's possible that there could be ties. In that case, the computer will choose a random winner/loser.
+Eg) If both P1 AND P2 tie as winners with 222 points, then the program will randomly decide a winner between P1 AND P2 using python's built-in random.choice() function.

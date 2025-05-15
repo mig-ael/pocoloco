@@ -1,5 +1,5 @@
-#Migael du Preez, Andrew Kim, and Haruki Hirata sat with us did nothing
-import random
+#Migael du Preez sat with us did nothing, Andrew Kim, and Haruki Hirata 
+import random,diceFaces
 
 #VARS
 UNDERLINE = '\033[4m'
@@ -7,7 +7,7 @@ RED = '\033[31m'
 RESET = '\033[0m'
 GREEN = '\033[32m'
 BLUE = '\x1b[34m'
-maxRolls= 3
+maxRolls=3
 currentRound=1
 lengthScoreCard=0
 gameHasEnded=False
@@ -22,6 +22,10 @@ botRolls3=[]
 
 
 #FUNCTIONS
+
+def instructions():
+    print(open('instructions.txt', 'r'))
+    
 def checkInt(input1): #use to make sure input from player is an int and returns an int
     while True: #loop until input is int
         try:
@@ -47,12 +51,12 @@ def endGameCheck():#check if any player hits 0 points and wins
 def tieBreaker(points1,points2,isMax): #decide what to do at a tie
     #Coin flip which way it goes
     if points1!=points2: #if there is not a tie
-        if isMax==1:
+        if isMax==1: #1 is True
             return max(points1,points2)
         else:
             return min(points1,points2)
     else:
-        return random.choice(points1,points2)
+        return random.choice([points1,points2])
 
 def calculation(roll):
     if sorted(roll)==[4,5,6]: #POCO
@@ -68,19 +72,19 @@ def calculation(roll):
         total = sum(rollValues.get(str(die), 0) for die in roll) #calculates points added up when not special
         return total
 def pointAddition(): # calculate total ammount of points and convert to chips
+    global botRolls1,botRolls2,botRolls3,playerRoll
     roundPoints['PC1']=calculation(botRolls1)
     roundPoints['PC2']=calculation(botRolls2)
     roundPoints['PC3']=calculation(botRolls3)
     roundPoints[name]=calculation(playerRoll) #player points
-    
+    print(roundPoints)
     #Loser
     loser=tieBreaker(sorted(roundPoints)[0],sorted(roundPoints)[1],0)
-    
     #Winner
     winner=tieBreaker(sorted(roundPoints)[2],sorted(roundPoints)[3],1)
 
-    print('Winner:',winner)
-    print('Loser:',loser)
+    print('Winner:',winner,roundPoints[winner])
+    print('Loser:',loser,roundPoints[loser])
 
 
     if roundPoints[winner]=='9999': #check if poco
@@ -96,7 +100,6 @@ def pointAddition(): # calculate total ammount of points and convert to chips
         chips[winner]-=1
         chips[loser]+=1
 
-
 def rollOrder(): #randomly decideds which order players roll dice in each round 
     random.shuffle(playerOrder)
     return playerOrder
@@ -104,21 +107,24 @@ def rollOrder(): #randomly decideds which order players roll dice in each round
 
 def roll3Bot1(maxRolls):
     global botRolls1
+    tempRolls=maxRolls
     botRolls1 = [random.randint(1, 6) for _ in range(3)]
-    maxRolls-=1
-    return maxRolls + 1
+    tempRolls-=1
+    return tempRolls + 1
 
 def roll3Bot2(maxRolls):
     global botRolls2
+    tempRolls=maxRolls
     botRolls2 = [random.randint(1, 6) for _ in range(3)]
-    maxRolls-=1
-    return maxRolls + 1
+    tempRolls-=1
+    return tempRolls + 1
 
 def roll3Bot3(maxRolls):
     global botRolls3
+    tempRolls=maxRolls
     botRolls3 = [random.randint(1, 6) for _ in range(3)]
-    maxRolls-=1
-    return maxRolls + 1
+    tempRolls-=1
+    return tempRolls + 1
 
 def roll3(maxRolls): #when all 3 dies are rolled together, make it look nice
     global playerRoll
@@ -133,6 +139,7 @@ def roll3(maxRolls): #when all 3 dies are rolled together, make it look nice
         playerRoll=[]
         playerRoll = [random.randint(1, 6) for _ in range(3)]
         print("You Rolled:",playerRoll) #replace later with actual dice faces and should we total it up for players or have them calculate and only we calc once they accept it?
+        
         print(f'You have {BLUE}{tempRolls}{RESET} rolls left.') if tempRolls!=1 else print(f'You have {BLUE}{tempRolls}{RESET} roll left.')
 
     return tempRolls+1
@@ -172,27 +179,29 @@ def gameLoop():
             print("P1 turn")
             maxRolls=roll3Bot1(maxRolls)
             print(botRolls1)
+            diceFaces.getDiceFace(botRolls1)
         elif player==2:
             print("P2 turn")
             maxRolls=roll3Bot2(maxRolls)
             print(botRolls2)
+            diceFaces.getDiceFace(botRolls2)
         elif player==3:
             print("P3 turn")
             maxRolls=roll3Bot3(maxRolls)
             print(botRolls3)
+            diceFaces.getDiceFace(botRolls3)
         else:
             print("It is your turn!")
             maxRolls=roll3(maxRolls)
+            diceFaces.getDiceFace(playerRoll)
     pointAddition()
     
-
-
+    
 
 #START
 intro = input('Welcome to PocoLoco!\nWould you like to read the instructions? (Y/N) ')
 if checkYN(intro)=='Y':
-    #print instrutions here
-    print('instructions filler') #maybe do a .txt file here and we do the open() thing?
+    instructions()
 name = input('What is your name? ')
 chipStartInput = input('How many chips do you want everyone to start with? ')
 
@@ -212,4 +221,4 @@ roundPoints={'PC1':0, 'PC2':0, 'PC3':0, name:0} #indiv points every round, gets 
 
 
 for i in range(7): #similuate 7 rounds for now (change to score hits 0 later)
-    currentRound =newRound(currentRound)
+    currentRound=newRound(currentRound)
