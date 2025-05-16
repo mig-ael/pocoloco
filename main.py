@@ -22,7 +22,6 @@ botRolls3=[]
 
 
 #FUNCTIONS
-
 def instructions():
     print(open('instructions.txt', 'r'))
     
@@ -44,19 +43,21 @@ def checkYN(input1): #use to make sure input from player is either a Y or N and 
 def endGameCheck():#check if any player hits 0 points and wins
     global gameHasEnded
     if any(chips[player]<=0 for player in chips):
+        scoreCard()
         print("GAME OVER") #PLACEHOLDER
+        #ADD WHO HAS WON NICE MESSAGE @HARUKI
     gameHasEnded=True
 
 #GOT TO CHECK IF THERES MORE THAN 2 THAT ARE TIED HAVE NOT IMPLEMENTED
-def tieBreaker(points1,points2,isMax): #decide what to do at a tie
+def tieBreaker(pair1, pair2, isMax): #decide what to do at a tie
     #Coin flip which way it goes
+    name1, points1 = pair1
+    name2, points2 = pair2
+
     if points1!=points2: #if there is not a tie
-        if isMax==1: #1 is True
-            return max(points1,points2)
-        else:
-            return min(points1,points2)
+        return name1 if ((points1 > points2) == bool(isMax)) else name2
     else:
-        return random.choice([points1,points2])
+        return random.choice([name1, name2])
 
 def calculation(roll):
     if sorted(roll)==[4,5,6]: #POCO
@@ -71,34 +72,52 @@ def calculation(roll):
     else:
         total = sum(rollValues.get(str(die), 0) for die in roll) #calculates points added up when not special
         return total
+
 def pointAddition(): # calculate total ammount of points and convert to chips
-    global botRolls1,botRolls2,botRolls3,playerRoll
+    global botRolls1,botRolls2,botRolls3,playerRoll,chips
     roundPoints['PC1']=calculation(botRolls1)
     roundPoints['PC2']=calculation(botRolls2)
     roundPoints['PC3']=calculation(botRolls3)
     roundPoints[name]=calculation(playerRoll) #player points
     print(roundPoints)
+    sorted_players = sorted(roundPoints.items(), key=lambda x: x[1])
     #Loser
-    loser=tieBreaker(sorted(roundPoints)[0],sorted(roundPoints)[1],0)
+    loser=tieBreaker(sorted_players[0], sorted_players[1], isMax=0)
     #Winner
-    winner=tieBreaker(sorted(roundPoints)[2],sorted(roundPoints)[3],1)
+    winner=tieBreaker(sorted_players[2], sorted_players[3], isMax=1)
 
     print('Winner:',winner,roundPoints[winner])
     print('Loser:',loser,roundPoints[loser])
 
-
-    if roundPoints[winner]=='9999': #check if poco
-        chips[winner]-=4
-        chips[loser]+=4
-    elif roundPoints[winner] in ('6666', '5555', '4444', '3333', '2222', '1111'): #check if three-of-a-kind
-        chips[winner]-=3
-        chips[loser]+=3
-    elif roundPoints[winner]==1000: #chgeck if loco
-        chips[winner]-=2
-        chips[winner]+=2
+    # Determine base transfer amount
+    if roundPoints[winner] == 9999:  # Poco
+        print('POCO')
+        transfer_amount = 4
+    elif roundPoints[winner] in (6666, 5555, 4444, 3333, 2222, 1111):  # Three-of-a-kind
+        print('THREE OF KIND')
+        transfer_amount = 3
+    elif roundPoints[winner] == 1000:  # LoCo
+        print('LOCO')
+        transfer_amount = 2
     else:
-        chips[winner]-=1
-        chips[loser]+=1
+        transfer_amount = 1
+
+    # Winner gives chips to loser
+    chips[winner] -= transfer_amount
+    chips[loser] += transfer_amount
+
+    # Two middle players give the same amount to loser
+    all_players = list(chips.keys())
+    middle_players = [p for p in all_players if p != winner and p != loser]
+
+    for player in middle_players: #transers middle players
+        chips[player] -= transfer_amount
+        chips[loser] += transfer_amount
+    
+    for player in chips: #so the player's points doesnt show as negative
+        if chips[player] <= 0:
+            endGameCheck()
+            chips[player] = 0
 
 def rollOrder(): #randomly decideds which order players roll dice in each round 
     random.shuffle(playerOrder)
@@ -139,7 +158,7 @@ def roll3(maxRolls): #when all 3 dies are rolled together, make it look nice
         playerRoll=[]
         playerRoll = [random.randint(1, 6) for _ in range(3)]
         print("You Rolled:",playerRoll) #replace later with actual dice faces and should we total it up for players or have them calculate and only we calc once they accept it?
-        
+        diceFaces.getDiceFace(playerRoll)
         print(f'You have {BLUE}{tempRolls}{RESET} rolls left.') if tempRolls!=1 else print(f'You have {BLUE}{tempRolls}{RESET} roll left.')
 
     return tempRolls+1
@@ -165,13 +184,12 @@ def newRound(currentRound): #We should prob loop this everytime newRound happens
     newRoundCard(currentRound,lengthScoreCard)
     scoreCard()
     gameLoop()
-    endGameCheck()
     return currentRound+1
 
 def gameLoop():
     global maxRolls
     #Based on the roll order using index of chips items, let each player roll (simulate for bots)
-
+    maxRolls=3
     print('player order:', playerOrder) # change to names
 
     for player in playerOrder:
@@ -193,7 +211,7 @@ def gameLoop():
         else:
             print("It is your turn!")
             maxRolls=roll3(maxRolls)
-            diceFaces.getDiceFace(playerRoll)
+            
     pointAddition()
     
     
@@ -220,5 +238,5 @@ lengthScoreCard = len(name) + (len(str(chipStart)) * 4) + 30
 roundPoints={'PC1':0, 'PC2':0, 'PC3':0, name:0} #indiv points every round, gets reset
 
 
-for i in range(7): #similuate 7 rounds for now (change to score hits 0 later)
+while gameHasEnded==False: #keep looping through games until gameend func triggered
     currentRound=newRound(currentRound)
