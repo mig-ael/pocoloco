@@ -3,7 +3,7 @@
 PocoLoco is a dice-rolling game played with chips. PocoLoco is played in rounds.
 In each round, players take turns rolling three dice and try to get the highest score possible. After all the players have taken their turn in a round, the lowest-scoring player is given chips from the other players.
 The game ends when a player loses all their chips. The first player with zero
-chips is the winner. Eg) Similar to how losing all your cards in UNO is a win.
+chips is the winner. Eg: Similar to how losing all your cards in UNO is a win.
 
 ### Gameplay
 
@@ -12,11 +12,12 @@ chips. If you want a shorter game, use fewer chips.
 
 At the start of the round, the order of the players is shuffled randomly.
 
-The starting player for the round rolls all three dice. Then, they have to choice to reroll all, 1, or 2 dice trying to get the highest possible score. They can re-roll up to two times.
+The starting player for the round rolls all three dice. Then, they have to choice to reroll all, 1, or 2 dice
+trying to get the highest possible score. They can re-roll up to two times.
 
 When a player's turn is done, the next player rolls. Within a round, the next
 player can only roll as many times as the player before them.
-Eg) If the order is P1,P2,P3,P4 and P1 decides to roll only once, the succeeding players can only roll once.
+Eg: If the order is P1,P2,P3,P4 and P1 decides to roll only once, the succeeding players can only roll once.
 When a new round starts then the first player can roll up to three times.
 
 ### Scoring system
@@ -63,5 +64,7 @@ until there is a winner.
 
 ### TIE BREAKING
 
-When determining a round's highest and lowest scoring players, it's possible that there could be ties. In that case, the computer will choose a random winner/loser.
-Eg) If both P1 AND P2 tie as winners with 222 points, then the program will randomly decide a winner between P1 AND P2 using python's built-in random.choice() function.
+When determining a round's highest and lowest scoring players, it's possible that there could be ties.
+In that case, the computer will choose a random winner/loser.
+Eg: If both P1 AND P2 tie as winners with 222 points, then the program will randomly decide a winner
+between P1 AND P2 using python's built-in random.choice() function.
