@@ -1,5 +1,7 @@
 #Migael du Preez sat with us did nothing, Andrew Kim, and Haruki Hirata 
 import random,diceFaces
+import time
+import os
 
 #VARS
 UNDERLINE = '\033[4m'
@@ -7,6 +9,7 @@ RED = '\033[31m'
 RESET = '\033[0m'
 GREEN = '\033[32m'
 BLUE = '\x1b[34m'
+GOLD = "\033[38;5;220m"
 maxRolls=3
 currentRound=1
 lengthScoreCard=0
@@ -23,7 +26,9 @@ botRolls3=[]
 
 #FUNCTIONS
 def instructions():
-    print(open('instructions.txt', 'r'))
+    instructions_file = open('instructions.txt')
+    for line in instructions_file:
+        print(line.strip())
     
 def checkInt(input1): #use to make sure input from player is an int and returns an int
     while True: #loop until input is int
@@ -40,13 +45,46 @@ def checkYN(input1): #use to make sure input from player is either a Y or N and 
         else:
             input1=input(f'Sorry, "{input1}" is invalid, please input "Y" or "N": ')
 
-def endGameCheck():#check if any player hits 0 points and wins
+def checkDice(input1): #use to make sure input from player is either d1, d2, d3
+    while True: #loop until input is d1 or d2 or d3
+            # Normalize input
+            cleaned = input1.replace(' ', '').upper()
+    
+            if cleaned == 'ALL':
+                return 'ALL'
+            
+            # Split on commas after removing spaces
+            parts = cleaned.split(',')
+
+            # Allow combinations of D1, D2, D3 only
+            valid_parts = {'D1', 'D2', 'D3'}
+            if all(part in valid_parts for part in parts) and len(parts) == len(set(parts)):
+                return ','.join(parts)  # Return cleaned and standardized version
+            else:
+                input1=input(f'Sorry, "{input1}" is invalid, please input "ALL" to reroll all the dice or specify which one (eg. "D1" or "D1 D2" or "D3,D1" etc): ')
+
+colors = [196, 202, 208, 214, 220, 190, 46, 51, 21, 93, 129, 201]
+
+def rainbow_name(winner):
+    while True:
+        for i in range(len(colors)):
+            os.system('cls' if os.name == 'nt' else 'clear')  # Clear screen
+            color = f"\033[38;5;{colors[i % len(colors)]}m"
+            reset = "\033[0m"
+            print(' '*(lengthScoreCard//2-(len(winner)+9)//2)+f'{GOLD}╔'+'='*(len(str(currentRound))+8)+'╗')
+            print(f"{GOLD}║{RESET} {color} {winner}{reset}{GOLD}  ║{reset}")
+            print(' '*(lengthScoreCard//2-(len(winner)+9)//2)+f'{GOLD}╚'+'='*(len(str(currentRound))+8)+'╝')
+
+            time.sleep(0.1)
+
+def endGameCheck(winner):#check if any player hits 0 points and wins
     global gameHasEnded
     if any(chips[player]<=0 for player in chips):
         scoreCard()
-        print("GAME OVER") #PLACEHOLDER
+        rainbow_name(winner) #PLACEHOLDER
         #ADD WHO HAS WON NICE MESSAGE @HARUKI
     gameHasEnded=True
+
 
 #GOT TO CHECK IF THERES MORE THAN 2 THAT ARE TIED HAVE NOT IMPLEMENTED
 def tieBreaker(pair1, pair2, isMax): #decide what to do at a tie
@@ -116,7 +154,7 @@ def pointAddition(): # calculate total ammount of points and convert to chips
     
     for player in chips: #so the player's points doesnt show as negative
         if chips[player] <= 0:
-            endGameCheck()
+            endGameCheck(winner)
             chips[player] = 0
 
 def rollOrder(): #randomly decideds which order players roll dice in each round 
@@ -147,21 +185,32 @@ def roll3Bot3(maxRolls):
 
 def roll3(maxRolls): #when all 3 dies are rolled together, make it look nice
     global playerRoll
-    tempRolls=maxRolls
-    while tempRolls>0: #roll until previous maxrolls
-        
-        if tempRolls!=maxRolls:
-            rerollReq=input("Would you like to roll again? (Y/N) ")
-            if checkYN(rerollReq)=='N':
-                break
-        tempRolls-=1
-        playerRoll=[]
-        playerRoll = [random.randint(1, 6) for _ in range(3)]
-        print("You Rolled:",playerRoll) #replace later with actual dice faces and should we total it up for players or have them calculate and only we calc once they accept it?
-        diceFaces.getDiceFace(playerRoll)
-        print(f'You have {BLUE}{tempRolls}{RESET} rolls left.') if tempRolls!=1 else print(f'You have {BLUE}{tempRolls}{RESET} roll left.')
+    rollAgain=0
+    playerRoll=[]
+    playerRoll = [random.randint(1, 6) for _ in range(3)]
+    print("You Rolled:",playerRoll) #replace later with actual dice faces and should we total it up for players or have them calculate and only we calc once they accept it?
+    diceFaces.getDiceFace(playerRoll)
+    print(f'You have {BLUE}{maxRolls}{RESET} rolls left.') if maxRolls!=1 else print(f'You have {BLUE}{maxRolls}{RESET} roll left.')
+    if checkYN('Would you like to roll again? (Y/N) ')=='Y':
+        rollAgain==1
+    
+    for i in range(maxRolls):
+        if rollAgain==1: #if rollAgain==1 then let them reroll
+            rollAgain=0
+            rerollers=checkDice('input "ALL" to reroll all the dice or specify which one eg. "D1" or "D1 D2" or "D3,D1" etc) ')
+            if 'D1' in rerollers:
+                playerRoll[0]=random.randint(1,6)
+            if 'D2' in rerollers:
+                playerRoll[1]=random.randint(1,6)
+            if 'D3' in rerollers:
+                playerRoll[2]=random.randint(1,6)
+            else: 
+                playerRoll = [random.randint(1, 6) for _ in range(3)]
+            
+            maxRolls-=1
 
-    return tempRolls+1
+            
+
 
 def scoreCard(): #Displays score after each round
     print('+' + '-' * lengthScoreCard + '+')
@@ -179,7 +228,7 @@ def newRoundCard(currentRound,lengthScoreCard): #perfect box to fit new round bo
     print(' '*(lengthScoreCard//2-(len(str(currentRound))+9)//2)+f'| {RED}Round {currentRound}{RESET} |')
     print(' '*(lengthScoreCard//2-(len(str(currentRound))+9)//2)+'+'+'-'*(len(str(currentRound))+8)+'+')
 
-def newRound(currentRound): #We should prob loop this everytime newRound happens
+def newRound(currentRound): #order of everything happening
     rollOrder()
     newRoundCard(currentRound,lengthScoreCard)
     scoreCard()
