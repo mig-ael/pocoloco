@@ -14,6 +14,7 @@ maxRolls=3
 currentRound=1
 lengthScoreCard=0
 gameHasEnded=False
+colors = [196, 202, 208, 214, 220, 190, 46, 51, 21, 93, 129, 201]
 #LISTS & DICTIONARIES
 rollValues ={'1':100, '2':2, '3':3, '4':4, '5': 5, '6':60}
 chips={'PC1':0, 'PC2':0, 'PC3':0} # we shbould prob change the names
@@ -22,7 +23,6 @@ playerOrder=[1,2,3,4]
 botRolls1=[]
 botRolls2=[]
 botRolls3=[]
-
 
 #FUNCTIONS
 def instructions():
@@ -63,12 +63,12 @@ def checkDice(input1): #use to make sure input from player is either d1, d2, d3
             else:
                 input1=input(f'Sorry, "{input1}" is invalid, please input "ALL" to reroll all the dice or specify which one (eg. "D1" or "D1 D2" or "D3,D1" etc): ')
 
-colors = [196, 202, 208, 214, 220, 190, 46, 51, 21, 93, 129, 201]
 
+#get rid of ts ts so bad
 def rainbow_name(winner):
     while True:
         for i in range(len(colors)):
-            os.system('cls' if os.name == 'nt' else 'clear')  # Clear screen
+            #os.system('cls' if os.name == 'nt' else 'clear')  # Clear screen
             color = f"\033[38;5;{colors[i % len(colors)]}m"
             reset = "\033[0m"
             print(' '*(lengthScoreCard//2-(len(winner)+9)//2)+f'{GOLD}╔'+'='*(len(str(currentRound))+8)+'╗')
@@ -81,7 +81,8 @@ def endGameCheck(winner):#check if any player hits 0 points and wins
     global gameHasEnded
     if any(chips[player]<=0 for player in chips):
         scoreCard()
-        rainbow_name(winner) #PLACEHOLDER
+        print('FINAL WINNER',winner)
+        #rainbow_name(winner) #PLACEHOLDER
         #ADD WHO HAS WON NICE MESSAGE @HARUKI
     gameHasEnded=True
 
@@ -191,7 +192,7 @@ def roll3(maxRolls): #when all 3 dies are rolled together, make it look nice
     print("You Rolled:",playerRoll) #replace later with actual dice faces and should we total it up for players or have them calculate and only we calc once they accept it?
     diceFaces.getDiceFace(playerRoll)
     print(f'You have {BLUE}{maxRolls}{RESET} rolls left.') if maxRolls!=1 else print(f'You have {BLUE}{maxRolls}{RESET} roll left.')
-    if checkYN('Would you like to roll again? (Y/N) ')=='Y':
+    if checkYN(input('Would you like to roll again? (Y/N) '))=='Y':
         rollAgain==1
     
     for i in range(maxRolls):
@@ -208,6 +209,7 @@ def roll3(maxRolls): #when all 3 dies are rolled together, make it look nice
                 playerRoll = [random.randint(1, 6) for _ in range(3)]
             
             maxRolls-=1
+    return maxRolls
 
             
 
@@ -266,7 +268,7 @@ def gameLoop():
     
 
 #START
-intro = input('Welcome to PocoLoco!\nWould you like to read the instructions? (Y/N) ')
+intro = input(f'{RESET}Welcome to PocoLoco!\nWould you like to read the instructions? (Y/N) ')
 if checkYN(intro)=='Y':
     instructions()
 name = input('What is your name? ')
