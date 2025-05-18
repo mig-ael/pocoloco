@@ -155,8 +155,9 @@ def pointAddition(): # calculate total ammount of points and convert to chips
     
     for player in chips: #so the player's points doesnt show as negative
         if chips[player] <= 0:
-            endGameCheck(winner)
             chips[player] = 0
+            endGameCheck(player)
+            
 
 def rollOrder(): #randomly decideds which order players roll dice in each round 
     random.shuffle(playerOrder)
