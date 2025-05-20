@@ -3,8 +3,8 @@ import random,diceFaces
 import time
 import os
 
+#add logic for optimal bots, fix reroll questioning
 
-# fix scorecard last pipe moving depending on if single or double digits, add logic for optimal bots,fix reroll questioning
 #VARS
 UNDERLINE = '\033[4m'
 RED = '\033[31m'
@@ -74,12 +74,12 @@ def rainbow_name(winner):
         if time.time() - start_time > duration:
             break
         for i in range(len(colors)):
-            os.system('cls' if os.name == 'nt' else 'clear')  # Clear screen
+            os.system('cls' if os.name == 'nt' else 'clear') # Clear screen
             color = f"\033[38;5;{colors[i % len(colors)]}m"
-            reset = "\033[0m"
-            print(' '*(lengthScoreCard//2-(len(winner)+9)//2)+f'{GOLD}╔'+'='*(len(winner)+8)+'╗')
-            print(' '*(lengthScoreCard//2-(len(winner)+9)//2)+f"{GOLD}║{RESET}"+ " " *(((len(winner)+8)/2)-3)+ f"{color} {winner} {reset}" + " "*(((len(winner)+8)/2)-3)+f"{GOLD}"'║' +f"{reset}")
-            print(' '*(lengthScoreCard//2-(len(winner)+9)//2)+f'{GOLD}╚'+'='*(len(winner)+8)+'╝'+f'{RESET}')
+            reset = "\033[0m"  #i dont think we need this var -Andrew
+            print(f'{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╔{'='*(len(winner)+8)}╗')
+            print(f'{' '*(lengthScoreCard//2-(len(winner)+9)//2)}║{' '*(((len(winner)+8)//2)-(len(winner)//2))}{color}{winner}{GOLD}{' '*(((len(winner)+8)//2)-(len(winner)//2))}║')
+            print(f'{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╚{'='*(len(winner)+8)}╝{RESET}')
             time.sleep(0.1)
     scoreCard()
         
