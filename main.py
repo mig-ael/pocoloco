@@ -216,6 +216,7 @@ def roll3(maxRolls): #when all 3 dies are rolled together, make it look nice
 
 
 def scoreCard(): #Displays score after each round
+    rollOrder()
     print('+' + '-' * lengthScoreCard + '+')
     print('|',end=' ')
     for key, value in sorted(chips.items(), key=lambda item: item[1]):
@@ -223,6 +224,13 @@ def scoreCard(): #Displays score after each round
             print(f'{GREEN}|{key}: {value}|{RESET}', end=' ')
         else:
             print(f'|{key}: {value}|', end=' ')
+    print('|')
+    print(f'| {UNDERLINE}Round Order:{RESET} ',end='')
+    for i in range(4):
+        if playerOrder[i]!=4:
+            print(f'{i+1}. |P'+str(playerOrder[i]),end='| ')
+        else:
+            print(f'{i+1}. {GREEN}{name}{RESET}',end='')
     print('|')
     print('+' + '-' * lengthScoreCard + '+\n')
 
@@ -242,7 +250,7 @@ def gameLoop():
     global maxRolls
     #Based on the roll order using index of chips items, let each player roll (simulate for bots)
     maxRolls=3
-    print('player order:', playerOrder) # change to names
+    
 
     for player in playerOrder:
         if player==1:
