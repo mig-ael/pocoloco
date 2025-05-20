@@ -214,7 +214,7 @@ def roll3(maxRolls): #when all 3 dies are rolled together, make it look nice
 
             
 
-
+#ANDREW CHECK IF WE SHOULD CHANGE NAMES FROM PC1 TO LIKE PLAYERCOUNT1 OR SUMT
 def scoreCard(): #Displays score after each round
     print('+' + '-' * lengthScoreCard + '+')
     print('|',end=' ')
