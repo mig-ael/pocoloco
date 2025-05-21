@@ -67,16 +67,16 @@ def checkDice(input1): #use to make sure input from player is either d1, d2, d3
 
 def rainbow_name(winner):
     start_time = time.time()
-    duration = 2
+    duration = 3
     while True:
         if time.time() - start_time > duration:
             break
         for i in range(len(colors)):
-            os.system('cls' if os.name == 'nt' else 'clear') # Clear screen to make the rainbow loop work
+            # os.system('cls' if os.name == 'nt' else 'clear') # Clear screen to make the rainbow loop work
             color = f"\033[38;5;{colors[i % len(colors)]}m"
-            print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╔{'='*(len(winner)+8)}╗")
-            print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}║{' '*(((len(winner)+8)//2)-(len(winner)//2))}{color}{winner}{GOLD}{' '*(((len(winner)+8)//2)-(len(winner)//2))}║")
-            print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╚{'='*(len(winner)+8)}╝{RESET}")
+            #print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╔{'='*(len(winner)+8)}╗")
+            print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}║{RESET}{' '*(((len(winner)+8)//2)-(len(winner)//2))}{color}{winner}{GOLD}{' '*(((len(winner)+8)//2)-(len(winner)//2))}║")
+            #print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╚{'='*(len(winner)+8)}╝{RESET}")
             time.sleep(0.1)
     scoreCard()
         
@@ -262,7 +262,7 @@ def roll3(maxRolls): #when all 3 dice are rolled together, make it look nice
             
 
 def scoreCard(): #Displays score after each round
-    print('+' + '-' * lengthScoreCard + '+')
+    print(f'{RESET}+' + '-' * lengthScoreCard + '+')
     print('|',end=' ')
     count=0
     for key, value in sorted(chips.items(), key=lambda item: item[1]):
