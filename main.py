@@ -43,7 +43,7 @@ def checkInt(input1): #use to make sure input from player is an int and returns 
 def checkYN(input1): #use to make sure input from player is either a Y or N and returns it
     while True: #loop until input is Y or N
         if input1.capitalize()=='Y' or input1.capitalize()=='N':
-            return input1
+            return input1.capitalize()
         else:
             input1=input(f'Sorry, "{input1}" is invalid, please input "Y" or "N": ')
 
@@ -76,10 +76,9 @@ def rainbow_name(winner):
         for i in range(len(colors)):
             os.system('cls' if os.name == 'nt' else 'clear') # Clear screen
             color = f"\033[38;5;{colors[i % len(colors)]}m"
-            reset = "\033[0m"  #i dont think we need this var -Andrew
-            print(f'{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╔{'='*(len(winner)+8)}╗')
-            print(f'{' '*(lengthScoreCard//2-(len(winner)+9)//2)}║{' '*(((len(winner)+8)//2)-(len(winner)//2))}{color}{winner}{GOLD}{' '*(((len(winner)+8)//2)-(len(winner)//2))}║')
-            print(f'{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╚{'='*(len(winner)+8)}╝{RESET}')
+            print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╔{'='*(len(winner)+8)}╗")
+            print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}║{' '*(((len(winner)+8)//2)-(len(winner)//2))}{color}{winner}{GOLD}{' '*(((len(winner)+8)//2)-(len(winner)//2))}║")
+            print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╚{'='*(len(winner)+8)}╝{RESET}")
             time.sleep(0.1)
     scoreCard()
         
@@ -234,10 +233,10 @@ def scoreCard(): #Displays score after each round
     for key, value in sorted(chips.items(), key=lambda item: item[1]):
         if key==name:
             print(f'{GREEN}|{key}: {value}|{RESET}', end=' ')
-            count+=1
+            count+=len(f'{GREEN}|{key}: {value}|{RESET} ')
         else:
             print(f'|{key}: {value}|', end=' ')
-            count+=1
+            count+=len(f'|{key}: {value}| ')
 
     gap=' '*(lengthScoreCard-count)
     print(f'{gap}|')
@@ -283,7 +282,10 @@ def gameLoop():
             maxRolls=roll3(maxRolls)
             
     pointAddition()
+
+def chip_update(chips):
     
+    pass
     
 
 #PROGRAM START
