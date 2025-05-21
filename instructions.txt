@@ -1,11 +1,11 @@
-### Overview
+### OVERVIEW
 
 PocoLoco is a dice-rolling game played with chips. PocoLoco is played in rounds.
 In each round, players take turns rolling three dice and try to get the highest score possible. After all the players have taken their turn in a round, the lowest-scoring player is given chips from the other players.
 The game ends when a player loses all their chips. The first player with zero
 chips is the winner. Eg: Similar to how losing all your cards in UNO is a win.
 
-### Gameplay
+### GAMEPLAY
 
 Each player starts with 10 chips. If you want a longer game, you can start with more
 chips. If you want a shorter game, use fewer chips.
@@ -20,7 +20,7 @@ player can only roll as many times as the player before them.
 Eg: If the order is P1,P2,P3,P4 and P1 decides to roll only once, the succeeding players can only roll once.
 When a new round starts then the first player can roll up to three times.
 
-### Scoring system
+### SCORING SYSTEM
 
 Dice rolls are ranked using this table, ordered from best (at the top) to worst
 (at the bottom):
