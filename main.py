@@ -4,7 +4,6 @@ import time
 import os
 
 #add logic for optimal bots, fix reroll questioning
-#hello change here
 
 #VARS
 UNDERLINE = '\033[4m'
