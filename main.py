@@ -3,7 +3,7 @@ import random,diceFaces
 import time
 import os
 
-#add logic for optimal bots, fix reroll questioning
+#add logic for optimal bots, check finalwinner tie break, (finalwinner going negatives then taking the positive one, etc), check rolls left logic
 
 #VARS
 UNDERLINE = '\033[4m'
@@ -50,7 +50,7 @@ def checkYN(input1): #use to make sure input from player is either a Y or N and 
 def checkDice(input1): #use to make sure input from player is either d1, d2, d3
     while True: #loop until input is d1 or d2 or d3
             # Normalize input
-            cleaned = input1.replace(' ', '').upper()
+            cleaned = (input1.replace(' ', '')).capitalize()
     
             if cleaned == 'ALL':
                 return 'ALL'
@@ -205,23 +205,30 @@ def roll3(maxRolls): #when all 3 dies are rolled together, make it look nice
     print("You Rolled:",playerRoll) #replace later with actual dice faces and should we total it up for players or have them calculate and only we calc once they accept it?
     diceFaces.getDiceFace(playerRoll)
     print(f'You have {BLUE}{maxRolls}{RESET} rolls left.') if maxRolls!=1 else print(f'You have {BLUE}{maxRolls}{RESET} roll left.')
-    if checkYN(input('Would you like to roll again? (Y/N) '))=='Y':
-        rollAgain==1
+
     
     for i in range(maxRolls):
+        if checkYN(input('Would you like to roll again? (Y/N) '))=='Y':
+            rollAgain=1
         if rollAgain==1: #if rollAgain==1 then let them reroll
+            print('rerolled!')
             rollAgain=0
-            rerollers=checkDice('input "ALL" to reroll all the dice or specify which one eg. "D1" or "D1 D2" or "D3,D1" etc.) ')
-            if 'D1' in rerollers:
-                playerRoll[0]=random.randint(1,6)
-            if 'D2' in rerollers:
-                playerRoll[1]=random.randint(1,6)
-            if 'D3' in rerollers:
-                playerRoll[2]=random.randint(1,6)
-            else: 
-                playerRoll = [random.randint(1, 6) for _ in range(3)]
-            
             maxRolls-=1
+            rerollers=checkDice(input(f'{UNDERLINE}Which would you like to reroll?{RESET}\nInput "ALL" to reroll all the dice or specify which one (eg. "D1" or "D1 D2" or "D3,D1" etc.): '))
+            if rerollers == 'ALL':
+                playerRoll = [random.randint(1, 6) for _ in range(3)]
+            else:
+                if 'D1' in rerollers:
+                    playerRoll[0] = random.randint(1, 6)
+                if 'D2' in rerollers:
+                    playerRoll[1] = random.randint(1, 6)
+                if 'D3' in rerollers:
+                    playerRoll[2] = random.randint(1, 6)
+
+            print("You Rolled:", playerRoll)
+            diceFaces.getDiceFace(playerRoll)
+            print(f'You have {BLUE}{maxRolls}{RESET} roll{"s" if maxRolls != 1 else ""} left.')
+    
     return maxRolls
 
             
