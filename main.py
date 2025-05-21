@@ -4,7 +4,6 @@ import time
 import os
 
 #add logic for optimal bots, fix reroll questioning
-#hello change here
 
 #VARS
 UNDERLINE = '\033[4m'
@@ -120,7 +119,7 @@ def calculation(roll):
         return total
 
 def pointAddition(): # calculate total ammount of points and convert to chips
-    global botRolls1,botRolls2,botRolls3,playerRoll,chips
+    global botRolls1,botRolls2,botRolls3,playerRoll,chips, lengthScoreCard
     roundPoints['PC1']=calculation(botRolls1)
     roundPoints['PC2']=calculation(botRolls2)
     roundPoints['PC3']=calculation(botRolls3)
@@ -170,6 +169,7 @@ def pointAddition(): # calculate total ammount of points and convert to chips
         if chips[player] == 0:
             endGameCheck(player)
             break  # stop checking once game has ended
+    lengthScoreCard = len(name) + chipUpdate() + 30
 
 
 def rollOrder(): #randomly decideds which order players roll dice in each round 
@@ -291,9 +291,16 @@ def gameLoop():
             
     pointAddition()
 
-def chip_update(chips):
+def chipUpdate():
+    global chips
+    count=0
+    chips_list=[]
+    for item in chips:
+        chips_list.append(item)
     
-    pass
+    for item in chips_list:
+        count+=(len(str(chips[item])))
+    return count
     
 
 #PROGRAM START
@@ -313,7 +320,7 @@ for chip in chips:
     chips[chip]=chipStart
 chips[name]=chipStart
 
-lengthScoreCard = len(name) + (len(str(chipStart)) * 4) + 30
+lengthScoreCard = len(name) + chipUpdate() + 30
 roundPoints={'PC1':0, 'PC2':0, 'PC3':0, name:0} #indiv points every round, gets reset
 
 
