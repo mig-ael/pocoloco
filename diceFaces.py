@@ -28,3 +28,8 @@ def getDiceFace(lst):
             print(line)
         print(diceTB15 * 3)
     print_dice_faces(lst)
+def makeABox(writing):
+    wordlen=len(writing)+2
+    print("+"+"-"*wordlen+"+")
+    print("| "+writing+" |")
+    print("+"+"-"*wordlen+"+")

@@ -1,7 +1,6 @@
 #Migael, Andrew, Haruki (a bit)
 import random,diceFaces
 import time
-import os
 
 #add logic for optimal bots, timing, formatting
 
@@ -18,7 +17,8 @@ maxRolls=3
 currentRound=1
 lengthScoreCard=0
 gameHasEnded=False
-colors = [196, 202, 208, 214, 220, 190, 46, 51, 21, 93, 129, 201]
+winner=''
+loser=''
 #LISTS & DICTIONARIES
 rollValues ={'1':100, '2':2, '3':3, '4':4, '5': 5, '6':60}
 chips={'PC1':0, 'PC2':0, 'PC3':0}
@@ -27,7 +27,7 @@ playerOrder=[1,2,3,4]
 botRolls1=[]
 botRolls2=[]
 botRolls3=[]
-
+colors = [196, 202, 208, 214, 220, 190, 46, 51, 21, 93, 129, 201]
 #FUNCTIONS
 def instructions():
     instructions_file = open('instructions.txt')
@@ -65,18 +65,15 @@ def checkDice(input1): #use to make sure input from player is either d1, d2, d3
                 input1=input(f'Sorry, "{input1}" is invalid, please input "ALL" to reroll all the dice or specify which one (eg. "D1" or "D1 D2" or "D3,D1" etc): ')
 
 
-def rainbow_name(winner):
+def rainbow_name(winner): #
     start_time = time.time()
     duration = 3
     while True:
         if time.time() - start_time > duration:
             break
         for i in range(len(colors)):
-            # os.system('cls' if os.name == 'nt' else 'clear') # Clear screen to make the rainbow loop work
             color = f"\033[38;5;{colors[i % len(colors)]}m"
-            #print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╔{'='*(len(winner)+8)}╗")
             print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}║{RESET}{' '*(((len(winner)+8)//2)-(len(winner)//2))}{color}{winner}{GOLD}{' '*(((len(winner)+8)//2)-(len(winner)//2))}║")
-            #print(f"{' '*(lengthScoreCard//2-(len(winner)+9)//2)}{GOLD}╚{'='*(len(winner)+8)}╝{RESET}")
             time.sleep(0.1)
     scoreCard()
         
@@ -113,22 +110,18 @@ def calculation(roll):
         return total
 
 def pointAddition(): # calculate total ammount of points and convert to chips
-    global botRolls1,botRolls2,botRolls3,playerRoll,chips, lengthScoreCard
+    global botRolls1,botRolls2,botRolls3,playerRoll,chips, lengthScoreCard,winner,loser
     roundPoints['PC1']=calculation(botRolls1)
     roundPoints['PC2']=calculation(botRolls2)
     roundPoints['PC3']=calculation(botRolls3)
     roundPoints[name]=calculation(playerRoll) #player points
-    roundScoreCard()
     sorted_players = sorted(roundPoints.items(), key=lambda x: x[1])
     #Loser
     loser=tieBreaker(sorted_players[0], sorted_players[1], isMax=0)
     #Winner
     winner=tieBreaker(sorted_players[2], sorted_players[3], isMax=1)
+    roundScoreCard()
 
-    winnerLoserCard('Winner: ',winner,lengthScoreCard)
-    winnerLoserCard('Loser: ',loser,lengthScoreCard)
-    print()
-    print()
 
     # Determine base transfer amount
     if roundPoints[winner] == 9999:  # Poco
@@ -273,7 +266,7 @@ def scoreCard(): #Displays score after each round
             print(f'{DARK_GRAY}|{key}: {value}|{RESET}', end=' ')
             count+=len(f'{DARK_GRAY}|{key}: {value}|{RESET} ')
 
-    gap=' '*(lengthScoreCard-count)
+    gap=' '*(lengthScoreCard-count-1)
     print(f'{gap}|')
     print('+' + '-' * lengthScoreCard + '+')
 
@@ -307,11 +300,25 @@ def roundScoreCard():
 
     # Center "ROUND SCORE" above the box
     label = "ROUND SCORE"
-    label_line = ' ' * ((score_box_width // 2) - (len(label) // 2)) + f"{PINK}{label}{RESET}"
+    label_line = ' ' * ((score_box_width // 2) - (len(label) // 2)) + f"{BLUE}{label}{RESET}"
     print(label_line)
     print('+' + '-' * score_box_width + '+')
     print('| ' + score_line_colored + ' ' * (score_box_width - len(score_line_plain) - 2) + '|')
     print('+' + '-' * score_box_width + '+')
+
+
+    winnerCard= ' ' * ((score_box_width // 2) - (len('| Winner: '+winner+' |') // 2)) + f"| {PINK}{'Winner: '+winner}{RESET} |"
+    print(' ' * ((score_box_width // 2) - (len('| Winner: '+winner+' |') // 2))+'+' + '-' *(len('|Winner: '+winner+'|')) + '+')
+    print(winnerCard)
+    print(' ' * ((score_box_width // 2) - (len('| Winner: '+winner+' |') // 2))+'+' + '-' *(len('|Winner: '+winner+'|')) + '+')
+    
+    loserCard= ' ' * ((score_box_width // 2) - (len('| Loser: '+loser+' |') // 2)) + f"| {PINK}{'Loser: '+loser}{RESET} |"
+    print(' ' * ((score_box_width // 2) - (len('| Loser: '+loser+' |') // 2))+'+' + '-' *(len('|Loser: '+loser+'|')) + '+')
+    print(loserCard)
+    print(' ' * ((score_box_width // 2) - (len('| Loser: '+loser+' |') // 2))+'+' + '-' *(len('|Loser: '+loser+'|')) + '+')
+    
+    print()
+    print()
 
 def newRoundCard(currentRound,lengthScoreCard): #box containing round number, centered above scorecared
     print(' '*(lengthScoreCard//2-(len(str(currentRound))+9)//2)+'+'+'-'*(len(str(currentRound))+8)+'+')
@@ -375,19 +382,11 @@ def specialRollCard(specialRoll,lengthScoreCard): #box containing special roll, 
     print(' '*(lengthScoreCard//2-(len(specialRoll)+9)//2)+f'| {PINK}{specialRoll}{RESET} |')
     print(' '*(lengthScoreCard//2-(len(specialRoll)+9)//2)+'+'+'-'*(len(specialRoll)+2)+'+')
 
-def winnerLoserCard(status,player,lengthScoreCard): #box for winner/loser, centered at the end of every round
-    card_width = len(status+player) + 4
-    pad = (lengthScoreCard - card_width) // 2
-    print(' ' * pad + '+' + '-' * (card_width - 2) + '+')
-    print(' ' * pad + f'| {PINK}{status}{player}{RESET} |')
-    print(' ' * pad + '+' + '-' * (card_width - 2) + '+')
-
-   
-
 
 
 #PROGRAM START
-intro = input(f'{RESET}Welcome to PocoLoco!\nWould you like to read the instructions? (Y/N) ')
+diceFaces.makeABox('Welcome to PocoLoco!')
+intro = input('Would you like to read the instructions? (Y/N) ')
 if checkYN(intro)=='Y':
     instructions()
 name = input('What is your name? ')
